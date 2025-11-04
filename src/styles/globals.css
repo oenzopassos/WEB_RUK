@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* ===== Variáveis de tema ===== */
+:root {
+  --background: oklch(0.08 0 0);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.12 0 0);
+  --card-foreground: oklch(0.95 0 0);
+  --primary: oklch(0.5 0.25 280);
+  --primary-foreground: oklch(0.95 0 0);
+  --secondary: oklch(0.15 0 0);
+  --secondary-foreground: oklch(0.95 0 0);
+  --accent: oklch(0.55 0.28 280);
+  --accent-foreground: oklch(0.95 0 0);
+  --muted: oklch(0.25 0 0);
+  --muted-foreground: oklch(0.7 0 0);
+  --border: oklch(0.2 0 0);
+  --input: oklab(14.957999999999998% 0 -0.00002);
+  --ring: oklch(0.55 0.28 280);
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: oklch(0.08 0 0);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.12 0 0);
+  --card-foreground: oklch(0.95 0 0);
+  --primary: oklch(0.5 0.25 280);
+  --primary-foreground: oklch(0.95 0 0);
+  --secondary: oklch(0.15 0 0);
+  --secondary-foreground: oklch(0.95 0 0);
+  --accent: #613dff;
+  --accent-foreground: oklch(0.95 0 0);
+  --muted: oklch(0.25 0 0);
+  --muted-foreground: oklch(0.7 0 0);
+  --border: oklch(0.2 0 0);
+  --input: oklch(0.15 0 0);
+  --ring: oklch(0.55 0.28 280);
+}
+
+/* ===== Base Layer ===== */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-[var(--background)] text-[var(--foreground)];
+  }
+}
+
+/* ===== Utilitários personalizados ===== */
+@layer utilities {
+  /* Fundo animado com gradiente roxo */
+  .animated-background {
+    background-color: rgb(242, 242, 246);
+    background-image:
+      radial-gradient(at 50% 0%, rgba(126, 34, 206, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(126, 34, 206, 0.1) 0px, transparent 50%),
+      linear-gradient(90deg, rgba(126, 34, 206, 0.05) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(126, 34, 206, 0.05) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .animated-background::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% -20%, rgba(126, 34, 206, 0.2) 0%, transparent 60%);
+    animation: float 20s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    25% {
+      transform: translateY(-20px) translateX(10px);
+    }
+    50% {
+      transform: translateY(0px) translateX(20px);
+    }
+    75% {
+      transform: translateY(-10px) translateX(-10px);
+    }
+  }
+
+  .glow-effect {
+    position: relative;
+  }
+
+  .glow-effect::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(126, 34, 206, 0.5), rgba(158, 55, 248, 0.1));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
