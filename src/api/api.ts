@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 export const api = axios.create({
-    baseURL: "http://localhost:3001/graphql",
+    baseURL: "https://api-ruk.onrender.com/graphql",
     headers: {
         "Content-Type": "application/json",
     },

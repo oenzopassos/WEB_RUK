@@ -12,7 +12,7 @@ import { useUsers } from "@/hooks/useUsers";
 export default function Home() {
   const router = useRouter();
   const [viewMode, setViewMode] = useState<"single" | "all">("single")
-    const { users, loading, error } = useUsers();
+  const { users } = useUsers();
   const { session, isLoading, signOut } = useAuth();
 
 
@@ -33,7 +33,7 @@ export default function Home() {
     <main className="animated-background min-h-screen relative">
       <div className="absolute inset-0 pointer-events-none" />
       <div className="flex w-full justify-end p-4 items-center gap-4   transform duration-150 will-change-transform  ">
-        <LogOut className="text-black cursor-pointer sm:hover:scale-110 " onClick={() => signOut()}/>
+        <LogOut className="text-black cursor-pointer sm:hover:scale-110 " onClick={() => signOut()} />
       </div>
       <div className="relative z-10 container mx-auto px-4 py-12">
         {/* Header */}
@@ -48,7 +48,7 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Toggle Buttons */}
+
         <div className="mb-12 flex flex-col sm:flex-row justify-center gap-4">
           <Button
             onClick={() => setViewMode("single")}
@@ -68,7 +68,6 @@ export default function Home() {
           </Button>
         </div>
 
-        {/* Content */}
         <div className="flex justify-center">
           {viewMode === "single" ? (
             <div className="w-full flex flex-col justify-center items-center">

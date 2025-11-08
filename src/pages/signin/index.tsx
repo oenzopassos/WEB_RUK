@@ -5,14 +5,18 @@ import { useAuth } from "@/hooks/useAuth";
 import { AxiosError } from "axios";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useActionState } from "react";
+import { useState } from "react";
 import { z, ZodError } from "zod"
 
 
 export default function SignIn() {
     const router = useRouter();
     const auth = useAuth();
-    const [state, formAction, isLoading] = useActionState(signIn, null)
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState("");
+
 
     const signInSchema = z.object({
         email: z.email({ message: "E-mail inválido" }),
@@ -23,15 +27,18 @@ export default function SignIn() {
 
     }
 
-    async function signIn(_: any, formData: FormData) {
+    async function handleSignIn(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setIsLoading(true);
+        setMessage("");
         try {
             const data = signInSchema.parse({
-                email: formData.get("email"),
-                password: formData.get("password")
+                email: email,
+                password: password,
             })
             const mutation = `
-                 mutation Login($input: LoginInputClass!) {
-                    login(input: $input) {
+                 mutation Login($data: LoginInputClass!) {
+                    login(data: $data) {
                     token
                     user {
                         id
@@ -47,33 +54,35 @@ export default function SignIn() {
                 `;
 
             const variables = {
-                input: data,
+                data: data,
             };
 
             const response = await api.post("/graphql", { query: mutation, variables });
 
             if (response.data?.errors?.length) {
-    const gqlError = response.data.errors[0];
-    throw new Error(gqlError.message || "Erro no servidor");
-  }
+                const gqlError = response.data.errors[0];
+                throw new Error(gqlError.message || "Erro no servidor");
+            }
 
             auth.save(response.data.data.login);
             router.push("/");
         } catch (error) {
             if (error instanceof ZodError) {
-                return { message: error.issues[0].message };
+                setMessage(error.issues[0].message);
+            } else if (error instanceof AxiosError) {
+                setMessage(error.response?.data?.errors?.[0]?.message);
+            } else if (error instanceof Error) {
+                setMessage(error.message);
+            } else {
+                setMessage("Erro desconhecido");
             }
-
-            if (error instanceof AxiosError) {
-                return { message: error.response?.data?.errors?.[0]?.message};
-            }
-
-            return { message: "Erro ao fazer login" };
+        } finally {
+            setIsLoading(false);
         }
     }
     return (
-        <div className="w-full h-full flex bg-white py-2 sm:h-screen sm:py-0 px-4 md:px-24 lg:px-0">
-            <div className="relative hidden lg:block lg:w-3/5 ">
+        <div className="w-full min-h-screen lg:h-screen flex flex-col flex-1 items-center bg-white py-2 sm:py-0 px-4 md:px-24 lg:flex-row lg:px-0">
+            <div className="relative lg:h-screen hidden lg:block lg:flex-1">
                 <Image
                     src={"/bg.jpg"}
                     alt="Background Image"
@@ -81,7 +90,8 @@ export default function SignIn() {
                     className="object-cover"
                 />
             </div>
-            <div className="flex-1 flex items-center justify-center px-4 lg:px-14">
+
+            <div className="w-full h-full lg:flex-1 flex items-center m-auto justify-center lg:px-14">
                 <div className="w-full">
                     <Image
                         src={"/logo.svg"}
@@ -90,14 +100,14 @@ export default function SignIn() {
                         height={50}
                         className="mb-10"
                     />
-                    <h1 className="pt-5 pb-6 text-2xl text-black font-bold">Nice to see you again</h1>
-                    <form action={formAction} className="w-full flex flex-col gap-4">
-                        <Input required legend="E-mail" name="email" type="email" placeholder="seu@email.com" />
+                    <h1 className="lg:pt-5 lg:pb-6 text-2xl text-black font-bold">Nice to see you again</h1>
+                    <form onSubmit={handleSignIn} className="w-full flex flex-col gap-4">
+                        <Input required legend="E-mail" name="email" type="email" onChange={(e) => setEmail(e.target.value)} placeholder="E-mail" />
 
-                        <Input required legend="Senha" name="password" type="password" placeholder="123456" />
+                        <Input required legend="Senha" name="password" type="password" onChange={(e) => setPassword(e.target.value)} placeholder="Senha" />
 
                         <p className="text-red-600 ml-2 font-semibold text-sm h-5">
-                            {state?.message}
+                            {message}
                         </p>
                         <Button type="submit" isLoading={isLoading} title="Sign in" />
                         <a href="/signup" className="text-sm font-semibold text-black mt-10 mb-4 text-center hover:text-black/60 transition ease-linear">Criar conta</a>
@@ -106,6 +116,5 @@ export default function SignIn() {
             </div>
 
         </div>
-
-    )
+    );
 }

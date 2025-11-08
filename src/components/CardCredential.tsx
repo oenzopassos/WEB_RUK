@@ -15,7 +15,7 @@ type Props = {
 
 export function CardCredential({ name, email, telephones, children }: Props) {
    return (
-    <Card className="glow-effect group relative w-full max-w-sm overflow-hidden bg-gradient-to-br from-purple-500/60 via-gray-300 to-white shadow-2xl transition-all will-change-transform duration-300 hover:shadow-2xl hover:shadow-purple-500/50 hover:scale-105 border border-purple-500/30">
+    <Card className="glow-effect group relative w-full max-w-sm overflow-hidden bg-gradient-to-br from-purple-500/60 via-gray-300 to-white shadow-2xl transition-all will-change-transform duration-300 hover:shadow-2xl hover:shadow-purple-500/50 md:hover:scale-105 border border-purple-500/30">
       <div className="absolute inset-0 overflow-hidden opacity-20">
         <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-purple-500/30 blur-3xl" />
         <div className="absolute -bottom-8 -left-8 h-40 w-40 rounded-full bg-purple-600/20 blur-3xl" />
